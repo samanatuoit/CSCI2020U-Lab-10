@@ -97,7 +97,7 @@ public class Server extends Application {
         @Override
         public void run() {
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 while ((message = in.readLine()) != null) {
                     textArea.appendText(message + "\n");
                     System.out.println("Message being read is " + message);
