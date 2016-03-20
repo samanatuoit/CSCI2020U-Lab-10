@@ -13,12 +13,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class Client extends Application {
 
     private Canvas canvas;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Group root = new Group();
         primaryStage.setTitle("Lab 10");
@@ -33,6 +39,7 @@ public class Client extends Application {
         Label messageLbl = new Label("Message: ");
         TextField messageFld = new TextField();
         Button sendBtn = new Button("Send");
+        sendBtn.setOnAction(evt -> sendMessage(messageFld.getText()));
         Button exitBtn = new Button("Exit");
         exitBtn.setOnAction(evt -> System.exit(0));
 
@@ -48,6 +55,18 @@ public class Client extends Application {
         Scene scene = new Scene(root, 300, 300);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void sendMessage(String message) {
+        try {
+            Socket socket = new Socket("127.0.0.1", 7000);
+            PrintWriter out = new PrintWriter(new ObjectOutputStream(socket.getOutputStream()));
+            out.println(message);
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
