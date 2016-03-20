@@ -19,6 +19,7 @@ public class Server extends Application {
 
     TextArea textArea;
 
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -33,6 +34,7 @@ public class Server extends Application {
 
         textArea = new TextArea();
         Button exitBtn = new Button("Exit");
+        exitBtn.setOnAction(evt -> System.exit(0));
         gridPane.add(textArea, 0, 0);
         gridPane.add(exitBtn, 0, 1);
 
@@ -46,8 +48,10 @@ public class Server extends Application {
 
     }
     public class handleConnections implements Runnable {
+        String message;
 
         private ServerSocket serverSocket;
+        Thread[] threads = null;
 
         public handleConnections() {
             try {
@@ -59,15 +63,21 @@ public class Server extends Application {
         }
         @Override
         public void run() {
+            System.out.println("Thread is running");
             while (true) {
-                String message;
                 try {
+                    System.out.println("Now accepting socket connections");
                     Socket clientSocket = serverSocket.accept();
                     System.out.println("Got a connection");
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    while ((message = in.readLine()) != null) {
-                        textArea.setText(message);
-                    }
+                    // Launch serverGetTextJob and put it into a thread
+                    Thread t = new Thread(new getText(clientSocket));
+                    t.start();
+
+                    //BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    /*while ((message = in.readLine()) != null) {
+                        textArea.appendText(message +"\n");
+                        System.out.println("The message is: " + message);
+                    }*/
 
 
                 } catch (IOException e) {
@@ -75,6 +85,28 @@ public class Server extends Application {
                 }
 
             }
+        }
+    }
+    public class getText implements Runnable {
+        private Socket clientSocket;
+        private String message;
+
+        public getText (Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
+        @Override
+        public void run() {
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+                while ((message = in.readLine()) != null) {
+                    textArea.appendText(message + "\n");
+                    System.out.println("Message being read is " + message);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -39,7 +41,17 @@ public class Client extends Application {
         Label messageLbl = new Label("Message: ");
         TextField messageFld = new TextField();
         Button sendBtn = new Button("Send");
-        sendBtn.setOnAction(evt -> sendMessage(messageFld.getText()));
+        sendBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String myMessage = userNameFld.getText() + ": " + messageFld.getText();
+                //System.out.println("Text being sent is " + messageFld.getText());
+                System.out.println("Text being sent is " + myMessage);
+                //sendMessage(messageFld.getText());
+                sendMessage(myMessage);
+                messageFld.setText("");
+            }
+        });
         Button exitBtn = new Button("Exit");
         exitBtn.setOnAction(evt -> System.exit(0));
 
@@ -60,9 +72,10 @@ public class Client extends Application {
     private void sendMessage(String message) {
         try {
             Socket socket = new Socket("127.0.0.1", 60000);
-            PrintWriter out = new PrintWriter(new ObjectOutputStream(socket.getOutputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream());
             out.println(message);
             out.flush();
+
 
         } catch (IOException e) {
             e.printStackTrace();
