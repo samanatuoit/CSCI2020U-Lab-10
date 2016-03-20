@@ -27,7 +27,7 @@ public class Client extends Application {
     public void start(Stage primaryStage) throws Exception {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Group root = new Group();
-        primaryStage.setTitle("Lab 10");
+        primaryStage.setTitle("Simple BBS Client v1.0");
         GridPane gridPane = new GridPane();
         gridPane.setVgap(20);
         gridPane.setHgap(50);
@@ -59,7 +59,7 @@ public class Client extends Application {
 
     private void sendMessage(String message) {
         try {
-            Socket socket = new Socket("127.0.0.1", 7000);
+            Socket socket = new Socket("127.0.0.1", 60000);
             PrintWriter out = new PrintWriter(new ObjectOutputStream(socket.getOutputStream()));
             out.println(message);
             out.flush();
